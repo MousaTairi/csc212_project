@@ -1,18 +1,46 @@
 public class BSTNode <T> {
-	public int key;
-	public T data;
-	public BSTNode<T> left, right;
+	private int key;
+	private T data;
+	private BSTNode<T> left, right;
 	
 	public BSTNode(int k, T val) {
-		key = k;
-		data = val;
-		left = right = null;
+		setKey(k);
+		setData(val);
 	}
 	
 	public BSTNode(int k, T val, BSTNode<T> l, BSTNode<T> r) {
-		key = k;
-		data = val;
+		setKey(k);
+		setData(val);
 		left = l;
-		right = r;
+		setRight(r);
 	}
+	public int getKey() {
+		return key;
+	}
+	public T getData() {
+		return data;
+	}
+	public BSTNode<T> getRight(){
+		return right;
+	}
+	public BSTNode<T> getLeft(){
+		return left;
+	}
+
+	public void setRight(BSTNode<T> right) {
+		this.right = right;
+	}
+
+	public void setLeft(BSTNode<T> left) {
+		this.left = left;
+	}
+
+	public void setKey(int key) {
+		this.key = key;
+	}
+
+	public void setData(T data) {
+		this.data = data;
+	}
+	
 }

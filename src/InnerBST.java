@@ -1,8 +1,7 @@
-public class BST <T> {
+public class InnerBST <T> {
 	BSTNode<T> root, current;
-	InnerBST ib=new InnerBST();
 	public int size;
-	public BST() {
+	public InnerBST() {
 		root = current = null;
 		
 	}

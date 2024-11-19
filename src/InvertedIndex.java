@@ -1,3 +1,4 @@
+
 public class InvertedIndex {
 	private WordNode head;
 	/*
