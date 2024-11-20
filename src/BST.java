@@ -1,7 +1,7 @@
 public class BST <T> {
 	BSTNode<T> root, current;
-	InnerBST ib=new InnerBST();
 	public int size;
+	public InnerBST ib;
 	public BST() {
 		root = current = null;
 		
@@ -18,27 +18,26 @@ public class BST <T> {
 	public T retrieve () {
 		return current.getData();
 	}
-	public boolean findkey(int tkey) {
+	public boolean findkey(String tkey) {
 		BSTNode<T> p = root, q = root;	
 		if(empty())
 			return false;
 		
 		while(p != null) {
 			q=p;
-			if(p.getKey() == tkey) {
+			if(p.getKey().equalsIgnoreCase(tkey)) {
 				current = p;
 				return true;
 			}
-			else if(tkey < p.getKey())
-				p = p.getLeft();
-			else
+			else if(p.getKey().compareTo(tkey)<0)
 				p = p.getRight();
+			else
+				p = p.getLeft();
 		}
-		
 		current = q;
 		return false;
 	}
-	public boolean insert(int k, T val) {
+	public boolean insert(String k, T val) {
 		BSTNode<T> p, q = current;
 		
 		if(findkey(k)) {
@@ -53,26 +52,26 @@ public class BST <T> {
 			return true;
 		}
 		else {
-			if (k < current.getKey())
-				current.setLeft(p);
-			else
+			if (current.getKey().compareTo(k)<0)
 				current.setRight(p);
+			else
+				current.setLeft(p);
 			current = p;
 			size++;
 			return true;
 		}
 	}
-	public boolean removeKey(int k) {
-		int k1 = k;
+	public boolean removeKey(String k) {
+		String k1 = k;
 		BSTNode<T> p = root;
 		BSTNode<T> q = null;
 		while (p != null) {
-			if (k1 < p.getKey()) {
+			if (p.getKey().compareTo(k1)>0) {
 				q=p;
 				p=p.getLeft();
-			}else if(k1<p.getKey()) {
+			}else if(p.getKey().compareTo(k1)<0) {
 				q=p;
-				p=p.getLeft();
+				p=p.getRight();
 			}else {
 				if ((p.getLeft() != null) && (p.getRight() != null)) {
 					BSTNode<T> min = p.getRight();
@@ -93,7 +92,7 @@ public class BST <T> {
 				if(q==null)
 					root=p;
 				else 
-					if(k1<q.getKey())
+					if(p.getKey().compareTo(k1)>0)
 						q.setLeft(p);
 					else
 						q.setRight(p);
@@ -109,7 +108,7 @@ public class BST <T> {
 		
 	
 
-	public boolean update(int key, T data){
+	public boolean update(String key, T data){
 			removeKey(current.getKey());
 			return insert(key, data);
 		}
