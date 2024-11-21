@@ -99,8 +99,11 @@ public class DocumentProcessor {
 			System.out.println("Error reading file: " + e.getMessage());
 		}
 	}
-
+        /*for bst use change the line below to this
+        private InvertedIndexBST InvertedIndex = new InvertedIndexBST();
+	*/
 	private InvertedIndex InvertedIndex = new InvertedIndex();
+	
 
 	public void BuildInvertedIndex() 
 	/*
@@ -117,7 +120,11 @@ public class DocumentProcessor {
 			}
 		}
 	}
-
+        /*for bst usage change the line below to this
+	public InvertedIndexBST getInvertedIndex() {
+		return InvertedIndex;
+	}
+	*/
 	public InvertedIndex getInvertedIndex() {
 		return InvertedIndex;
 	}
