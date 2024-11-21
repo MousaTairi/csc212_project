@@ -1,3 +1,6 @@
+/*this isnt really needed because most methods are not used
+for example in linked lists we dont need to implement a delete method because 
+we wont use it anywhere in the project code
 public class BST <T> {
 	BSTNode<T> root, current;
 	public int size;
@@ -165,7 +168,7 @@ public class BST <T> {
 	}
 }
 
-
+*/
 	
 
 
