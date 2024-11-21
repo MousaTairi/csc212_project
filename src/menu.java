@@ -8,7 +8,9 @@ public class menu {
         documentProcessor.LoadDocuments("here the path to the cvs file");
         documentProcessor.BuildInvertedIndex();
 
-
+        /*for bst change the below line to this 
+        InvertedIndexBST invertedIndex = documentProcessor.getInvertedIndex();
+        */
         InvertedIndex invertedIndex = documentProcessor.getInvertedIndex();
         QueryProcessor queryProcessor = new QueryProcessor(invertedIndex, documentProcessor);
 
@@ -72,7 +74,14 @@ public class menu {
                         System.out.println();
                     }
                     break;
+                /*for bst change case 4 to this
+                case 4:
+				System.out.println("\n*** Indexed Tokens ***");
+				invertedIndex.TraverseInOrder(invertedIndex.getRoot());
 
+				break; 
+                */    
+                    
                 case 4:
                     System.out.println("\n*** Indexed Tokens ***");
                     WordNode current = invertedIndex.getHead();
