@@ -1,5 +1,7 @@
 public class QueryProcessor {
-
+        /*for bst change the below line to this
+	private InvertedIndexBST  InvertedIndex;
+        */
 	private InvertedIndex InvertedIndex;
 	private DocumentProcessor DocumentProcessor;
 	/*
@@ -7,7 +9,14 @@ public class QueryProcessor {
 	 * i barely got this working after days of trying 
 	 * i will try explaining to the best of my ability
 	 */
-
+	
+        /*
+	for bst change the below code to this 
+        public QueryProcessor(InvertedIndexBST  invertedIndex, DocumentProcessor documentProcessor) {
+		this.InvertedIndex = invertedIndex;
+		this.DocumentProcessor = documentProcessor;
+	}
+        */
 	public QueryProcessor(InvertedIndex invertedIndex, DocumentProcessor documentProcessor) {
 		this.InvertedIndex = invertedIndex;
 		this.DocumentProcessor = documentProcessor;
