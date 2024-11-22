@@ -5,11 +5,12 @@ public class InvertedIndexBST {
 	public InvertedIndexBST() {
 		Root = null;
 	}
-
+        //Big-O: O(log(n))
 	public void AddWord(String word, int docID) {
 		Root = AddWordBST(Root, word, docID);
 	}
 
+	//Big-O: O(log(n))
 	private BSTNode AddWordBST(BSTNode current, String word, int docID) {
 		if (current == null) {
 			BSTNode newNode = new BSTNode(word);
@@ -29,10 +30,12 @@ public class InvertedIndexBST {
 		return current;
 	}
 
+	//Big-O: O(log(n))
 	public DocumentIDNode getDocuments(String word) {
 		return GetDocumentsBST(Root, word);
 	}
 
+	//Big-O: O(log(n))
 	private DocumentIDNode GetDocumentsBST(BSTNode current, String word) {
 		if (current == null) {
 			return null;
@@ -49,6 +52,7 @@ public class InvertedIndexBST {
 		}
 	}
 
+	//Big-O: O(n + m)
 	public void TraverseInOrder(BSTNode node) {
 		if (node != null) {
 			TraverseInOrder(node.getLeft());
