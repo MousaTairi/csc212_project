@@ -12,6 +12,7 @@ public class InvertedIndex {
 	/*
 	 * kind of a linked list add for the DocumentIDNode method
 	 */
+	//Big-O: O(n * m)
 
 	public void AddWord(String word, int docID) {
 		if (head == null) {
@@ -42,6 +43,7 @@ public class InvertedIndex {
 	/*
 	 * return a list of document ids associated with a word
 	 */
+	//Big-O: O(n * m)
 	public DocumentIDNode getDocuments(String word) {
 		WordNode current = head;
 		while (current != null) {
