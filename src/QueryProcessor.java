@@ -27,6 +27,7 @@ public class QueryProcessor {
 	 * this takes a sentence from the user and splits it if it has 
 	 * more than one word and also uses the ANDORPRESEDNECE method
 	 */
+	//Big-O: O(n * m)
 	public DocumentIDNode ProcessANDOR(String query) {
 		
 		String[] words = query.split("\\s+");
@@ -40,6 +41,7 @@ public class QueryProcessor {
 	 * because its way better as its big O(1) for adding at the end of the list
 	 * and uses the addtoresult method below 
 	 */
+	//Big-O: O(n)
 	private DocumentIDNode GetAllDocuments() {
 		DocumentIDNode resultHead = null, resultTail = null;
 		for (int i = 0; i < DocumentProcessor.getDocumentList().getSize(); i++) {
@@ -58,6 +60,7 @@ public class QueryProcessor {
 	/*
 	 *checks if a its not excluded then adds it 
 	 */
+	//Big-O: O(n * m)
 	private DocumentIDNode NOT(DocumentIDNode TotalDocs, DocumentIDNode ExcludedDocs) {
 		DocumentIDNode resultHead = null, resultTail = null;
 		DocumentIDNode currentTotal = TotalDocs;
@@ -87,6 +90,7 @@ public class QueryProcessor {
 	/*
 	 * Basically makes the AND part of a query always processed first 
 	 */
+	//Big-O: O(n * m)
 	private DocumentIDNode ANDORPRESEDENCE(String[] query) {
 		DocumentIDNode Result = null; 
 		DocumentIDNode ANDResult = null;
@@ -139,10 +143,12 @@ public class QueryProcessor {
 
 		return Result;
 	}
+	//Big-O: O(n)
 
 	private DocumentIDNode GetDocumentsIDForWord(String word) {
 		return InvertedIndex.getDocuments(word); 
 	}
+	//Big-O: O(L1 + L2)
 
 	private DocumentIDNode Intersection(DocumentIDNode list1, DocumentIDNode list2) {
 		DocumentIDNode ResultHead = null, ResultTail = null;
@@ -169,6 +175,7 @@ public class QueryProcessor {
 
 	
 
+	//Big-O: O(L1 * L2)
 	private DocumentIDNode Union(DocumentIDNode list1, DocumentIDNode list2) {
 		DocumentIDNode ResultHead = null, ResultTail = null;
 
@@ -210,6 +217,7 @@ public class QueryProcessor {
 	}
 
 
+	//Big-O: O(n)
 	private DocumentIDNode AddToResult(DocumentIDNode head, DocumentIDNode tail, int docID) {
 	
 		DocumentIDNode current = head;
@@ -236,6 +244,7 @@ public class QueryProcessor {
 
 		return head; 
 	}
+	//Big-O: O(n * m)
 
 	public NumNode RankedRetrieval(String query) {
 		NumNode scoreHead = null;
@@ -259,6 +268,7 @@ public class QueryProcessor {
 		return SortByScoreAscending(scoreHead);
 	}
 
+	//Big-O: O(n)
 	private NumNode AddScore(NumNode head, int docID, int scoreToAdd) {
 		NumNode current = head, previous = null;
 
@@ -280,6 +290,7 @@ public class QueryProcessor {
 		}
 		return head;
 	}
+	//Big-O: O(n^2)
 
 	private NumNode SortByScoreAscending(NumNode head) {
 		if (head == null || head.getNext() == null) {
