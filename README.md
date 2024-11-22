@@ -2,25 +2,35 @@ i will put the entire code for every class that needs to use basic index
 the classes present in here(the program works completly with them just copy and paste)
 BasicIndex
 Document
-DocumentNode
-WordDocumentNode
 DocumentIDNode
-QueryProcessor
+DocumentLL
+DocumentNode
 DocumentProcessor
-StopWordsLL
 NumNode
+QueryProcessor
+StopWordNode
+StopWordsLL
+WordNode
 menu
------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 public class BasicIndex {
     private DocumentNode Head; 
-    private WordDocumentNode WordHead; 
+    private WordNode WordHead;; 
 
     public BasicIndex() {
         Head = null;
         WordHead = null;
     }
 
-    public DocumentNode getHead() {
+    public WordNode getWordHead() {
+		return WordHead;
+	}
+
+	public void setWordHead(WordNode wordHead) {
+		WordHead = wordHead;
+	}
+
+	public DocumentNode getHead() {
         return Head;
     }
 
@@ -30,7 +40,7 @@ public class BasicIndex {
 
         
         for (String word : words) {
-            WordDocumentNode WordNode = AddWordNode(word); 
+        	WordNode WordNode = AddWordNode(word); 
             WordNode.addDocumentID(docID);
         }
 
@@ -47,8 +57,8 @@ public class BasicIndex {
     }
 
     
-    private WordDocumentNode AddWordNode(String word) {
-        WordDocumentNode Current = WordHead; 
+    private WordNode AddWordNode(String word) {
+    	WordNode Current = WordHead; 
         while (Current != null) {
             if (Current.getWord().equals(word)) {
                 return Current; 
@@ -58,7 +68,7 @@ public class BasicIndex {
         }
 
      
-        WordDocumentNode NewNode = new WordDocumentNode(word);
+        WordNode NewNode = new WordNode(word);
         if (Current == null) {
             WordHead = NewNode; 
         } else {
@@ -81,7 +91,7 @@ public class BasicIndex {
 
     
     public DocumentIDNode GetDocuments(String word) {
-        WordDocumentNode current = WordHead; 
+    	WordNode current = WordHead; 
         while (current != null) {
             if (current.getWord().equals(word)) {
                 return current.getDocumentIDs(); 
@@ -102,7 +112,7 @@ public class BasicIndex {
         }
     }
 }
---------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 public class Document {
     private int DocumentId;
     private String Content;
@@ -124,56 +134,7 @@ public class Document {
         return Content;
     }
 }
---------------------------------------------------------------------------------------------------------------------
-public class WordDocumentNode {
-    private String Word;
-    private DocumentIDNode DocumentIDs;
-    private WordDocumentNode Next;
-
-    public WordDocumentNode(String word) {
-        this.Word = word;
-        this.DocumentIDs = null;
-        this.Next = null;
-    }
-
-    public String getWord() {
-        return Word;
-    }
-
-    public DocumentIDNode getDocumentIDs() {
-        return DocumentIDs;
-    }
-
-    public void AddDocumentID(int docID) {
-        if (DocumentIDs == null) {
-            DocumentIDs = new DocumentIDNode(docID);
-            DocumentIDs.incrementNumberOfTimes(); 
-        } else {
-            DocumentIDNode current = DocumentIDs;
-            while (current != null) {
-                if (current.getDocID() == docID) {
-                    current.incrementNumberOfTimes(); 
-                    return;
-                }
-                if (current.getNext() == null) break;
-                current = current.getNext();
-            }
-            DocumentIDNode NewNode = new DocumentIDNode(docID);
-            NewNode.incrementNumberOfTimes(); 
-            current.setNext(NewNode);
-        }
-    }
-
-
-    public WordDocumentNode getNext() {
-        return Next;
-    }
-
-    public void setNext(WordDocumentNode next) {
-        this.Next = next;
-    }
-}
---------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 public class DocumentIDNode {
     private int DocID; 
     private DocumentIDNode Next; 
@@ -209,7 +170,236 @@ public class DocumentIDNode {
 		this.NumberOfTimes++;
 	}
 }
------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+public class DocumentLL {
+    private DocumentNode Head;
+    private int Size;
+    /*
+     * just a normal linked list class
+     * with a getDocument method which find 
+     * a document based on a given index(id number)
+     */
+
+    public DocumentLL() {
+        Head = null;
+        Size = 0;
+    }
+
+    public void addDocument(Document doc) {
+        DocumentNode newNode = new DocumentNode(doc);
+        if (Head == null) {
+            Head = newNode;
+        } else {
+            DocumentNode current = Head;
+            while (current.getNext() != null) {
+                current = current.getNext();
+            }
+            current.setNext(newNode);
+        }
+        Size++;
+    }
+
+    public int getSize() {
+        return Size;
+    }
+
+    public Document getDocument(int index) {
+        if (index < 0 || index >= Size) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+        DocumentNode current = Head;
+        for (int i = 0; i < index; i++) {
+            current = current.getNext();
+        }
+        return current.getDocument();
+    }
+}
+--------------------------------------------------------------------------------
+public class DocumentNode {
+	private Document Data;
+	private DocumentNode Next;
+	/*
+	 * this is the node for the Document class
+	 * which will be used in the DocumentLL(Linked List)
+	 */
+	
+
+	public DocumentNode(Document document) {
+		this.Data = document;
+		this.Next = null;
+	}
+
+	public Document getDocument() {
+		return Data;
+	}
+
+	public DocumentNode getNext() {
+		return Next;
+	}
+
+	public void setNext(DocumentNode next) {
+		this.Next = next;
+	}
+	
+}
+--------------------------------------------------------------------------------
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class DocumentProcessor {
+	private DocumentLL DocumentList;
+	private StopWordsLL StopWords;
+	/*
+	 * this is complicated class so ill explain it method by method in short 1-it
+	 * loads a document 2-filters words 3-builds the inverted index
+	 */
+
+	public DocumentProcessor(String stopWordsFilePath) {
+		DocumentList = new DocumentLL();
+		StopWords = new StopWordsLL();
+		StopWords.LoadStopWords(stopWordsFilePath);// go to class stopwordsLL
+	}
+
+	private String[] Filtering(String content) 
+	/*
+	 * take a sentence,splits it 
+	 * handles all punctuation marks and then adds it to an array called filtered words
+	 * 
+	 */
+	{
+		String[] RawWords = content.toLowerCase().split("\\s+");
+		String[] FilteredWords = new String[RawWords.length];
+		int count = 0;
+
+		for (String word : RawWords) {
+			word = word.replaceAll("[^a-zA-Z0-9]", "");
+
+			if (!StopWords.IsStopWord(word) && !word.isEmpty()) {
+				FilteredWords[count++] = word;
+			}
+		}
+
+		String[] result = new String[count];
+		System.arraycopy(FilteredWords, 0, result, 0, count);
+		return result;
+	}
+
+	public void LoadDocuments(String filePath) 
+	/*
+	 * reads the cvs files and skips the first line because it isnt useful 
+	 * and stops reading when it encounters an empty line
+	 * we have an array called parts which has 2 contents the first one
+	 * is the id the second one is the string or the sentence 
+	 */
+	{
+		try (BufferedReader a = new BufferedReader(new FileReader(filePath))) {
+			String line;
+
+			a.readLine(); // We are skipping the first line here
+
+			while ((line = a.readLine()) != null) {
+				line = line.trim();// for the "whitespace" of lines
+				if (line.isEmpty())
+					continue;
+				
+			
+				String[] parts = line.split(",", 2);
+				/*
+				 * splits the line into two parts once it detects  
+				 * the first ","
+				 * the reason for the number 2 
+				 * is that a sentence may have a lot of commas
+				 * but we only want to split it once
+				 * with the first comma being the one 
+				 * that indicates the ending of the 
+				 * doc id and the beginning of the string content
+				 */
+
+				try {
+					int documentId = Integer.parseInt(parts[0].trim());
+					/*
+					 *converts the document id from a string
+					 *(since it is handled this way)
+					 *to a number using parseInt 
+					 */
+					String content = parts[1].trim();
+					/*
+					 * again just removing whitespace
+					 */
+					String[] Sentences = Filtering(content);
+					BasicIndex.AddDocument(documentId,Sentences);
+
+					Document doc = new Document(documentId, String.join(" ", Sentences));
+					/*
+					 * we use join since the Filtering method returns 
+					 * an array of words,we could use another way to do this
+					 * but its the most obvious solution 
+					 */
+					DocumentList.addDocument(doc);
+				} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+					continue;
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Error reading file: " + e.getMessage());
+		}
+	}
+
+	
+
+
+	
+	private BasicIndex BasicIndex = new BasicIndex();
+	
+	public BasicIndex getBasicIndex() {
+	    return BasicIndex;
+	}
+
+	
+
+	public DocumentLL getDocumentList() {
+		return DocumentList;
+	}
+}
+----------------------------------------------------------------------------------
+public class NumNode {
+    private int DocID;
+    private int Score;
+    private NumNode Next;
+    /*
+     * classic node class 
+     * useful for ranked retrieval in the queryprocessor class 
+     * 
+     */
+
+    public NumNode(int docID, int score) {
+        this.DocID = docID;
+        this.Score = score;
+        this.Next = null;
+    }
+
+    public int getDocID() {
+        return DocID;
+    }
+
+    public int getScore() {
+        return Score;
+    }
+
+    public void setScore(int score) {
+        this.Score = score;
+    }
+
+    public NumNode getNext() {
+        return Next;
+    }
+
+    public void setNext(NumNode next) {
+        this.Next = next;
+    }
+}
+--------------------------------------------------------------------------------
 public class QueryProcessor {
 
 	private BasicIndex  BasicIndex;
@@ -444,19 +634,19 @@ public class QueryProcessor {
 	public NumNode RankedRetrieval(String query) {
 	    NumNode scoreHead = null;
 
-	  
+	    // Split the query into terms
 	    String[] terms = query.toLowerCase().split("\\s+");
 
-	  
+	    // Process each term
 	    for (String term : terms) {
-	        DocumentIDNode docNode = BasicIndex.GetDocuments(term); 
+	        DocumentIDNode docNode = BasicIndex.GetDocuments(term); // Retrieve documents for the term
 
-	      
+	        // Update scores for the retrieved documents
 	        while (docNode != null) {
 	            int docID = docNode.getDocID();
-	            int termFrequency = docNode.getNumberOfTimes(); 
+	            int termFrequency = docNode.getNumberOfTimes(); // Get term frequency
 
-	         
+	            // Add or update the score for this document
 	            scoreHead = AddScore(scoreHead, docID, termFrequency);
 
 	            docNode = docNode.getNext();
@@ -473,14 +663,14 @@ public class QueryProcessor {
 
 	    while (current != null) {
 	        if (current.getDocID() == docID) {
-	            current.setScore(current.getScore() + scoreToAdd); 
+	            current.setScore(current.getScore() + scoreToAdd); // Increment the score
 	            return head;
 	        }
 	        previous = current;
 	        current = current.getNext();
 	    }
 
-	    
+	    // Add a new node if the document ID is not in the list
 	    NumNode newNode = new NumNode(docID, scoreToAdd);
 	    if (previous == null) {
 	        return newNode; // First node in the list
@@ -532,143 +722,32 @@ public class QueryProcessor {
 
 
 }
----------------------------------------------------------------------------------------------------------------------------
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+------------------------------------------------------------------------------------
+public class StopWordNode {
+    private String Word;
+    private StopWordNode Next;
+    /*
+     * a node for StopWordsLL
+     */
 
-public class DocumentProcessor {
-	private DocumentLL DocumentList;
-	private StopWordsLL StopWords;
-	/*
-	 * this is complicated class so ill explain it method by method in short 1-it
-	 * loads a document 2-filters words 3-builds the inverted index
-	 */
+    public StopWordNode(String word) {
+        this.Word = word;
+        this.Next = null;
+    }
 
-	public DocumentProcessor(String stopWordsFilePath) {
-		DocumentList = new DocumentLL();
-		StopWords = new StopWordsLL();
-		StopWords.LoadStopWords(stopWordsFilePath);// go to class stopwordsLL
-	}
+    public String getWord() {
+        return Word;
+    }
 
-	private String[] Filtering(String content) 
-	/*
-	 * take a sentence,splits it 
-	 * handles all punctuation marks and then adds it to an array called filtered words
-	 * 
-	 */
-	{
-		String[] RawWords = content.toLowerCase().split("\\s+");
-		String[] FilteredWords = new String[RawWords.length];
-		int count = 0;
+    public StopWordNode getNext() {
+        return Next;
+    }
 
-		for (String word : RawWords) {
-			word = word.replaceAll("[^a-zA-Z0-9]", "");
-
-			if (!StopWords.IsStopWord(word) && !word.isEmpty()) {
-				FilteredWords[count++] = word;
-			}
-		}
-
-		String[] result = new String[count];
-		System.arraycopy(FilteredWords, 0, result, 0, count);
-		return result;
-	}
-
-	public void LoadDocuments(String filePath) 
-	/*
-	 * reads the cvs files and skips the first line because it isnt useful 
-	 * and stops reading when it encounters an empty line
-	 * we have an array called parts which has 2 contents the first one
-	 * is the id the second one is the string or the sentence 
-	 */
-	{
-		try (BufferedReader a = new BufferedReader(new FileReader(filePath))) {
-			String line;
-
-			a.readLine(); // We are skipping the first line here
-
-			while ((line = a.readLine()) != null) {
-				line = line.trim();// for the "whitespace" of lines
-				if (line.isEmpty())
-					continue;
-				
-			
-				String[] parts = line.split(",", 2);
-				/*
-				 * splits the line into two parts once it detects  
-				 * the first ","
-				 * the reason for the number 2 
-				 * is that a sentence may have a lot of commas
-				 * but we only want to split it once
-				 * with the first comma being the one 
-				 * that indicates the ending of the 
-				 * doc id and the beginning of the string content
-				 */
-
-				try {
-					int documentId = Integer.parseInt(parts[0].trim());
-					/*
-					 *converts the document id from a string
-					 *(since it is handled this way)
-					 *to a number using parseInt 
-					 */
-					String content = parts[1].trim();
-					/*
-					 * again just removing whitespace
-					 */
-					String[] Sentences = Filtering(content);
-					BasicIndex.AddDocument(documentId,Sentences);
-
-					Document doc = new Document(documentId, String.join(" ", Sentences));
-					/*
-					 * we use join since the Filtering method returns 
-					 * an array of words,we could use another way to do this
-					 * but its the most obvious solution 
-					 */
-					DocumentList.addDocument(doc);
-				} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-					continue;
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error reading file: " + e.getMessage());
-		}
-	}
-
-	private InvertedIndexBST InvertedIndex = new InvertedIndexBST();
-
-
-	public void BuildInvertedIndex() 
-	/*
-	 * goes through a loop of documents
-	 * splits the strings into singular words
-	 * then adds the word using its doc id
-	 */
-	{
-		for (int i = 0; i < DocumentList.getSize(); i++) {
-			Document doc = DocumentList.getDocument(i);
-			String[] words = doc.getContent().split("\\s+");
-			for (String word : words) {
-				InvertedIndex.AddWord(word, doc.getDocumentId());
-			}
-		}
-	}
-	private BasicIndex BasicIndex = new BasicIndex();
-	
-	public BasicIndex getBasicIndex() {
-	    return BasicIndex;
-	}
-
-	public InvertedIndexBST getInvertedIndex() {
-		return InvertedIndex;
-	}
-
-	public DocumentLL getDocumentList() {
-		return DocumentList;
-	}
+    public void setNext(StopWordNode next) {
+        this.Next = next;
+    }
 }
---------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -731,154 +810,66 @@ public class StopWordsLL {
         return false;
     }
 }
---------------------------------------------------------------------------------------------------------------------------
-public class NumNode {
-    private int DocID;
-    private int Score;
-    private NumNode Next;
-    /*
-     * classic node class 
-     * useful for ranked retrieval in the queryprocessor class 
-     * 
-     */
+-------------------------------------------------------------------------------------
+public class WordNode {
+	private String Word;
+	private DocumentIDNode DocumentIDs;
+	private WordNode Next;
+	/*
+	 * this is a node class in a linked list in the invertedindex class i know its a
+	 * bit weird to include a linkedlist in an otherwise normal class but i think
+	 * this is considered normal professionally and it also uses another node
+	 * class(DocumentIDNode) as a linkedlist (i know its a unique representation )
+	 */
 
-    public NumNode(int docID, int score) {
-        this.DocID = docID;
-        this.Score = score;
-        this.Next = null;
-    }
+	public WordNode(String word) {
+		this.Word = word;
+		this.DocumentIDs = null;
+		this.Next = null;
+	}
 
-    public int getDocID() {
-        return DocID;
-    }
+	public String getWord() {
+		return Word;
+	}
 
-    public int getScore() {
-        return Score;
-    }
+	public DocumentIDNode getDocumentIDs() {
+		return DocumentIDs;
+	}
+	/*
+	 * exactly like a normal linked list add method
+	 * and also uses the NumberOfTimes variable we talked about before
+	 * for its use look in the inverted index 
+	 */
 
-    public void setScore(int score) {
-        this.Score = score;
-    }
+	public void addDocumentID(int docID) {
+		if (DocumentIDs == null) {
+			DocumentIDs = new DocumentIDNode(docID);
+			DocumentIDs.incrementNumberOfTimes();
 
-    public NumNode getNext() {
-        return Next;
-    }
+		} else {
+			DocumentIDNode current = DocumentIDs;
+			while (current != null) {
+				if (current.getDocID() == docID) {
+					current.incrementNumberOfTimes();
 
-    public void setNext(NumNode next) {
-        this.Next = next;
-    }
-}
-------------------------------------------------------------------------------------------------------------------------
-import java.util.Scanner;
-
-public class menu {
-	public static void main(String[] args) {
-
-		DocumentProcessor documentProcessor = new DocumentProcessor(
-				"");
-		documentProcessor.LoadDocuments("");
-		documentProcessor.BuildInvertedIndex();
-
-		InvertedIndexBST invertedIndex = documentProcessor.getInvertedIndex();
-		BasicIndex basicIndex = documentProcessor.getBasicIndex();
-		QueryProcessor queryProcessor = new QueryProcessor(basicIndex, documentProcessor);
-		Scanner scanner = new Scanner(System.in);
-		while (true) {
-
-			System.out.println("*** Menu ***");
-			System.out.println("1. Boolean Retrieval");
-			System.out.println("2. Ranked Retrieval");
-			System.out.println("3. Indexed Documents");
-			System.out.println("4. Indexed Tokens");
-			System.out.println("5. Exit");
-			System.out.print("Enter your choice: ");
-
-			int choice = scanner.nextInt();
-			scanner.nextLine();
-
-			switch (choice) {
-			case 1:
-				System.out.print("Enter Boolean query: ");
-				String query = scanner.nextLine().trim();
-				DocumentIDNode booleanResults = queryProcessor.ProcessANDOR(query);
-
-				if (booleanResults == null) {
-					System.out.println("No matching documents found.");
-				} else {
-					System.out.print("Matching Document IDs: ");
-					while (booleanResults != null) {
-						System.out.print(booleanResults.getDocID() + " ");
-						booleanResults = booleanResults.getNext();
-					}
-					System.out.println();
+					return;
 				}
-				break;
-
-			case 2:
-				System.out.print("Enter Ranked Retrieval query: ");
-				String rankedQuery = scanner.nextLine().trim();
-				NumNode rankedResults = queryProcessor.RankedRetrieval(rankedQuery);
-
-				if (rankedResults == null) {
-					System.out.println("No matching documents found.");
-				} else {
-					System.out.println("Ranked Results:");
-					while (rankedResults != null) {
-						System.out.println(
-								"Document ID: " + rankedResults.getDocID() + " - Score: " + rankedResults.getScore());
-						rankedResults = rankedResults.getNext();
-					}
-				}
-				break;
-
-			case 3:
-			    System.out.println("\n*** Basic Index documents ***");
-			    documentProcessor.getBasicIndex().displayAllDocuments();
-			    break;
-
-
-			case 4:
-			    System.out.println("\n*** Words in Basic Index ***");
-			    BasicIndex basicIndex1 = documentProcessor.getBasicIndex();
-
-			   
-			    WordDocumentLL wordToDocuments = new WordDocumentLL();
-
-			   
-			    DocumentNode currentDoc = basicIndex1.getHead(); 
-			    while (currentDoc != null) {
-			        int docID = currentDoc.getDocument().getDocumentId();
-			        String[] words = currentDoc.getDocument().getContent().split("\\s+");
-
-			      
-			        for (String word : words) {
-			            wordToDocuments.addWord(word, docID);
-			        }
-
-			        currentDoc = currentDoc.getNext();
-			    }
-
-			 
-			    WordDocumentNode currentWordNode = wordToDocuments.getHead();
-			    while (currentWordNode != null) {
-			        System.out.print("Word: " + currentWordNode.getWord() + " -> Documents: ");
-			        DocumentIDNode docIDs = currentWordNode.getDocumentIDs();
-			        while (docIDs != null) {
-			            System.out.print(docIDs.getDocID() + " ");
-			            docIDs = docIDs.getNext();
-			        }
-			        System.out.println();
-			        currentWordNode = currentWordNode.getNext();
-			    }
-			    break;
-
-			case 5:
-				System.out.println("Exiting the program");
-				return;
-
-			default:
-				System.out.println("Invalid choice. Please try again.");
+				if (current.getNext() == null)
+					break;
+				current = current.getNext();
 			}
+			DocumentIDNode newNode = new DocumentIDNode(docID);
+			newNode.incrementNumberOfTimes();
+			current.setNext(newNode);
+
 		}
+	}
+
+	public WordNode getNext() {
+		return Next;
+	}
+
+	public void setNext(WordNode next) {
+		this.Next = next;
 	}
 }
