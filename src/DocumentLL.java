@@ -11,7 +11,6 @@ public class DocumentLL {
         Head = null;
         Size = 0;
     }
-
     public void addDocument(Document doc) {
         DocumentNode newNode = new DocumentNode(doc);
         if (Head == null) {
@@ -29,7 +28,7 @@ public class DocumentLL {
     public int getSize() {
         return Size;
     }
-
+//Big-O: O(n)
     public Document getDocument(int index) {
         if (index < 0 || index >= Size) {
             throw new IndexOutOfBoundsException("Index out of bounds");
@@ -41,3 +40,4 @@ public class DocumentLL {
         return current.getDocument();
     }
 }
+//Big-O: O(n)
