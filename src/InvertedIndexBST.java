@@ -29,7 +29,7 @@ public class InvertedIndexBST {
 		return current;
 	}
 
-	public DocumentIDNode GetDocuments(String word) {
+	public DocumentIDNode getDocuments(String word) {
 		return GetDocumentsBST(Root, word);
 	}
 
