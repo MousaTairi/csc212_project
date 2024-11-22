@@ -15,6 +15,7 @@ public class DocumentProcessor {
 		StopWords = new StopWordsLL();
 		StopWords.LoadStopWords(stopWordsFilePath);// go to class stopwordsLL
 	}
+	//Big-O: O(n)
 
 	private String[] Filtering(String content) 
 	/*
@@ -39,6 +40,7 @@ public class DocumentProcessor {
 		System.arraycopy(FilteredWords, 0, result, 0, count);
 		return result;
 	}
+	//Big-O: O(n * m)
 
 	public void LoadDocuments(String filePath) 
 	/*
@@ -99,12 +101,14 @@ public class DocumentProcessor {
 			System.out.println("Error reading file: " + e.getMessage());
 		}
 	}
+	//Big-O: O(n * m * a)
         /*for bst use change the line below to this
         private InvertedIndexBST InvertedIndex = new InvertedIndexBST();
 	*/
 	private InvertedIndex InvertedIndex = new InvertedIndex();
 	
 
+	//Big-O: O(n * m)
 	public void BuildInvertedIndex() 
 	/*
 	 * goes through a loop of documents
