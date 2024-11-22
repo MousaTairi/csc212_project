@@ -35,7 +35,7 @@ public class BasicIndex {
 	public DocumentNode getHead() {
         return Head;
     }
-// Big-O: O(1) - Direct getter
+// Big-O: O(1) 
 
    
     public void AddDocument(int docID, String[] words) {
