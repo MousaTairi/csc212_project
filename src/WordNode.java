@@ -27,6 +27,7 @@ public class WordNode {
 	 * and also uses the NumberOfTimes variable we talked about before
 	 * for its use look in the inverted index 
 	 */
+	//Big-O: O(n)
 
 	public void addDocumentID(int docID) {
 		if (DocumentIDs == null) {
