@@ -25,14 +25,17 @@ public class BasicIndex {
     public WordNode getWordHead() {
 		return WordHead;
 	}
+ // Big-O: O(1)
 
 	public void setWordHead(WordNode wordHead) {
 		WordHead = wordHead;
 	}
+ // Big-O: O(1) 
 
 	public DocumentNode getHead() {
         return Head;
     }
+// Big-O: O(1) - Direct getter
 
    
     public void AddDocument(int docID, String[] words) {
@@ -55,6 +58,10 @@ public class BasicIndex {
             current.setNext(NewDoc);
         }
     }
+    /*Big-O: O(n + m)
+    n: Number of words in the document
+    m: Number of documents in the linked list
+    */
 
     
     private WordNode AddWordNode(String word) {
@@ -66,6 +73,7 @@ public class BasicIndex {
             if (Current.getNext() == null) break;
             Current = Current.getNext();
         }
+	
 
      
         WordNode NewNode = new WordNode(word);
@@ -76,6 +84,7 @@ public class BasicIndex {
         }
         return NewNode;
     }
+    // Big-O: O(n)
 
  
     public String[] GetWordsinDocument(int docID) {
@@ -88,6 +97,7 @@ public class BasicIndex {
         }
         return null; 
     }
+    // Big-O: O(n)
 
     
     public DocumentIDNode GetDocuments(String word) {
@@ -100,6 +110,7 @@ public class BasicIndex {
         }
         return null; 
     }
+    // Big-O: O(n)
 
 
     
@@ -111,6 +122,7 @@ public class BasicIndex {
             current = current.getNext();
         }
     }
+    // Big-O: O(n)
 }
 -----------------------------------------------------------------------------------
 public class Document {
@@ -198,6 +210,7 @@ public class DocumentLL {
         }
         Size++;
     }
+     // Big-O: O(n)
 
     public int getSize() {
         return Size;
@@ -260,6 +273,7 @@ public class DocumentProcessor {
 		StopWords = new StopWordsLL();
 		StopWords.LoadStopWords(stopWordsFilePath);// go to class stopwordsLL
 	}
+  // Big-O: O(n)
 
 	private String[] Filtering(String content) 
 	/*
@@ -284,6 +298,10 @@ public class DocumentProcessor {
 		System.arraycopy(FilteredWords, 0, result, 0, count);
 		return result;
 	}
+  /* Big-O: O(n * m)
+   n is the number of words
+   m is the number of stop words
+  */
 
 	public void LoadDocuments(String filePath) 
 	/*
@@ -345,6 +363,12 @@ public class DocumentProcessor {
 			System.out.println("Error reading file: " + e.getMessage());
 		}
 	}
+  /* Big-O: O(n * (m * a + b))
+  n is the number of documents
+  m is words per document
+  a is stop words
+  b is documents in the linked list
+  */
 
 	
 
@@ -428,6 +452,7 @@ public class QueryProcessor {
 		
 		return ANDORPRESEDENCE(words);
 	}
+ // Big-O: O(n * (m + a)) n is the query terms, m is WordNodes a is documents
 
 	/*
 	 * notice that we use a tail here
@@ -447,7 +472,7 @@ public class QueryProcessor {
 		}
 		return resultHead;
 	}
-	
+	// Big-O: O(n)
 
 	/*
 	 *checks if a its not excluded then adds it 
@@ -477,6 +502,7 @@ public class QueryProcessor {
 		}
 		return resultHead;
 	}
+ // Big-O: O(n * m) n is TotalDocs nodes m is ExcludedDocs nodes
 
 	/*
 	 * Basically makes the AND part of a query always processed first 
@@ -533,10 +559,12 @@ public class QueryProcessor {
 
 		return Result;
 	}
+  // Big-O: O(n * (m + a))n is the query terms m is WordNodes a is documents
 
 	private DocumentIDNode GetDocumentsIDForWord(String word) {
 		 return BasicIndex.GetDocuments(word);
 	}
+ // Big-O: O(n)
 
 	private DocumentIDNode Intersection(DocumentIDNode list1, DocumentIDNode list2) {
 		DocumentIDNode ResultHead = null, ResultTail = null;
@@ -560,6 +588,7 @@ public class QueryProcessor {
 
 		return ResultHead;
 	}
+ // Big-O: O(min(n1, n2)) n1 and n2 are the lengths of the lists
 
 	
 
@@ -602,6 +631,7 @@ public class QueryProcessor {
 
 		return ResultHead;
 	}
+ // Big-O: O(n1 + n2) n1 and n2 are the lengths of the lists?????
 
 
 	private DocumentIDNode AddToResult(DocumentIDNode head, DocumentIDNode tail, int docID) {
@@ -630,32 +660,37 @@ public class QueryProcessor {
 
 		return head; 
 	}
+  // Big-O: O(n)
 
 	public NumNode RankedRetrieval(String query) {
 	    NumNode scoreHead = null;
 
-	    // Split the query into terms
+	   
 	    String[] terms = query.toLowerCase().split("\\s+");
 
-	    // Process each term
+	  
 	    for (String term : terms) {
-	        DocumentIDNode docNode = BasicIndex.GetDocuments(term); // Retrieve documents for the term
+	        DocumentIDNode docNode = BasicIndex.GetDocuments(term);
 
-	        // Update scores for the retrieved documents
+	    
 	        while (docNode != null) {
 	            int docID = docNode.getDocID();
-	            int termFrequency = docNode.getNumberOfTimes(); // Get term frequency
+	            int termFrequency = docNode.getNumberOfTimes(); 
 
-	            // Add or update the score for this document
+	          
 	            scoreHead = AddScore(scoreHead, docID, termFrequency);
 
 	            docNode = docNode.getNext();
 	        }
 	    }
 
-	    // Sort the ranked results
+	   
 	    return SortByScoreAscending(scoreHead);
 	}
+ // Big-O: O(n * (m + a * log(a)))????
+    // n Number of terms in query
+    // m WordNodes traversal
+    // a Total number of ranked results ????
 
 
 	private NumNode AddScore(NumNode head, int docID, int scoreToAdd) {
@@ -663,22 +698,23 @@ public class QueryProcessor {
 
 	    while (current != null) {
 	        if (current.getDocID() == docID) {
-	            current.setScore(current.getScore() + scoreToAdd); // Increment the score
+	            current.setScore(current.getScore() + scoreToAdd); 
 	            return head;
 	        }
 	        previous = current;
 	        current = current.getNext();
 	    }
 
-	    // Add a new node if the document ID is not in the list
+	  
 	    NumNode newNode = new NumNode(docID, scoreToAdd);
 	    if (previous == null) {
-	        return newNode; // First node in the list
+	        return newNode; 
 	    } else {
 	        previous.setNext(newNode);
 	    }
 	    return head;
 	}
+ // Big-O: O(n)
 
 
 	private NumNode SortByScoreAscending(NumNode head) {
@@ -719,7 +755,7 @@ public class QueryProcessor {
 
 		return sorted; 
 	}
-
+Big-O: O(n^2)
 
 }
 ------------------------------------------------------------------------------------
@@ -777,6 +813,8 @@ public class StopWordsLL {
             System.out.println("Error reading stop words file: " + e.getMessage());
         }
     }
+    // Big-O: O(n * m)n is the number of stop words m is the number of nodes in the linked list
+
     /*
      * adds a word using the normal linked list method
      */
@@ -794,6 +832,7 @@ public class StopWordsLL {
             current.setNext(newNode);
         }
     }
+    // Big-O: O(n)
     /*
      * a check if a word belongs to this class,useful later
      */
@@ -809,6 +848,7 @@ public class StopWordsLL {
         }
         return false;
     }
+    // Big-O: O(n)
 }
 -------------------------------------------------------------------------------------
 public class WordNode {
@@ -864,6 +904,7 @@ public class WordNode {
 
 		}
 	}
+ // Big-O: O(n)
 
 	public WordNode getNext() {
 		return Next;
