@@ -23,6 +23,7 @@ public class BSTNode {
 		return DocumentIDs;
 	}
 
+	//Big-O: O(n)
 	public void addDocumentID(int docID) {
 		if (DocumentIDs == null) {
 			DocumentIDs = new DocumentIDNode(docID);
