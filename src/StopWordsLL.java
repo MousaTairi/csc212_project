@@ -17,6 +17,7 @@ public class StopWordsLL {
      * loads the stop words and adds them using the below method
      */
 
+    //Big-O: O(n)
     public void LoadStopWords(String filePath) {
         try (BufferedReader a = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -32,6 +33,7 @@ public class StopWordsLL {
      */
 
 
+    //Big-O: O(n)
     private void AddStopWord(String word) {
         StopWordNode newNode = new StopWordNode(word);
         if (Head == null) {
@@ -49,6 +51,7 @@ public class StopWordsLL {
      */
 
 
+    //Big-O: O(n)
     public boolean IsStopWord(String word) {
         StopWordNode current = Head;
         while (current != null) {
