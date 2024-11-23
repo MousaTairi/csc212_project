@@ -109,7 +109,7 @@ public class DocumentProcessor {
 	
 
 	//Big-O: O(n * m * a * b)
-	//for bst Big-O: O(n * m * a)n is number of docs m is average num of words per doc and a is the height of the bst 
+	//for bst Big-O: O(n * m * loga)n is number of docs m is average num of words per doc and a is the height of the bst 
 	public void BuildInvertedIndex() 
 	/*
 	 * goes through a loop of documents
