@@ -41,7 +41,7 @@ public class QueryProcessor {
 	 * because its way better as its big O(1) for adding at the end of the list
 	 * and uses the addtoresult method below 
 	 */
-	//Big-O: O(n)
+	//Big-O: O(n * m)
 	private DocumentIDNode GetAllDocuments() {
 		DocumentIDNode resultHead = null, resultTail = null;
 		for (int i = 0; i < DocumentProcessor.getDocumentList().getSize(); i++) {
