@@ -108,7 +108,7 @@ public class DocumentProcessor {
 	private InvertedIndex InvertedIndex = new InvertedIndex();
 	
 
-	//Big-O: O(n * m)
+	//Big-O: O(n * m * a * b)
 	//for bst Big-O: O(n * m * a)n is number of docs m is average num of words per doc and a is the height of the bst 
 	public void BuildInvertedIndex() 
 	/*
