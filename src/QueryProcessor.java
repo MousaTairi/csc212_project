@@ -175,7 +175,7 @@ public class QueryProcessor {
 
 	
 
-	//Big-O: O(L1 * L2)
+	//Big-O: O(L1 + L2)
 	private DocumentIDNode Union(DocumentIDNode list1, DocumentIDNode list2) {
 		DocumentIDNode ResultHead = null, ResultTail = null;
 
