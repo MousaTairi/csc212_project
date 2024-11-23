@@ -148,7 +148,7 @@ public class QueryProcessor {
 	private DocumentIDNode GetDocumentsIDForWord(String word) {
 		return InvertedIndex.getDocuments(word); 
 	}
-	//Big-O: O(L1 + L2)
+	//Big-O: O(n*(L1 + L2))
 
 	private DocumentIDNode Intersection(DocumentIDNode list1, DocumentIDNode list2) {
 		DocumentIDNode ResultHead = null, ResultTail = null;
